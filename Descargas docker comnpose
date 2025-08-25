@@ -1,0 +1,11 @@
+
+
+ => [1/5] FROM docker.io/library/python:3.11@sha256:6f4ad35576ea868518b5621c31595bf5a56b9b0c333f18118c868543c7f7cf40 
+
+  => [2/5] WORKDIR /app                                                                                                                                                                                        0.7s
+ => [3/5] COPY requirements.txt .                                                                                                                                                                             0.1s
+ => [4/5] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir -r requirements.txt   
+
+
+ Downloading torch-2.8.0-cp311-cp311-manylinux_2_28_x86_64.whl (888.1 MB)  
+ Downloading nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl (594.3 MB) 
