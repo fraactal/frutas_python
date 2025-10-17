@@ -1,7 +1,16 @@
-fastapi
-uvicorn
-pillow
-transformers
-torch
-python-multipart
-jinja2
+# Dependencias principales de la app
+fastapi==0.112.0
+uvicorn==0.30.6
+
+# Librerías para procesamiento de imágenes
+pillow==10.4.0
+
+# Modelos de NLP con HuggingFace
+transformers==4.44.2
+torch==2.4.1
+
+# Manejo de formularios
+python-multipart==0.0.9
+
+# Templates HTML
+jinja2==3.1.4
