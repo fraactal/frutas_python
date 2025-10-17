@@ -13,4 +13,4 @@ torch==2.4.1
 python-multipart==0.0.9
 
 # Templates HTML
-jinja2==3.1.4
+jinja2==3.1.6
