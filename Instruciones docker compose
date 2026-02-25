@@ -1,0 +1,119 @@
+📄 Dockerfile (offline ready)
+FROM python:3.11.8
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_INDEX=1
+
+WORKDIR /app
+
+# Copiamos wheels locales y requirements
+COPY wheels /wheels
+COPY requirements.txt .
+
+# Instalamos desde wheels (sin salir a Internet)
+RUN python -m pip install --upgrade pip && \
+    pip install --no-index --find-links=/wheels -r requirements.txt
+
+# Copiamos el resto del código
+COPY . .
+
+EXPOSE 8000
+CMD ["uvicorn","app:app","--host","0.0.0.0","--port","8000"]
+
+📄 docker-compose.offline.yml
+
+👉 Este builda el contenedor usando los wheels locales.
+
+services:
+  fruit-predictor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: frutas-python:1
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    pull_policy: never
+
+📄 docker-compose.image.yml
+
+👉 Este usa una imagen ya construida (la que exportas desde tu PC con docker save).
+
+services:
+  fruit-predictor:
+    image: frutas-python:1
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    pull_policy: never
+
+📄 make_offline_bundle.sh
+
+👉 Script para generar el bundle completo (wheels + imagen base + tu imagen).
+
+#!/usr/bin/env bash
+set -e
+
+IMAGE_NAME="frutas-python:1"
+
+echo "[1/3] Descargando wheels en ./wheels/"
+mkdir -p wheels
+docker run --rm -v "$PWD:/io" python:3.11.8 bash -lc "
+  python -m pip install --upgrade pip wheel &&
+  pip download --only-binary=:all: -r /io/requirements.txt -d /io/wheels
+"
+
+echo "[2/3] Construyendo imagen local $IMAGE_NAME"
+docker buildx build --platform linux/amd64 -t $IMAGE_NAME --load .
+
+echo "[3/3] Guardando imagen a tar"
+docker save $IMAGE_NAME -o ${IMAGE_NAME//:/-}.tar
+
+echo "✅ Bundle listo:"
+echo "   - wheels/ (dependencias offline)"
+echo "   - ${IMAGE_NAME//:/-}.tar (imagen lista para docker load)"
+
+
+Dale permisos de ejecución:
+
+chmod +x make_offline_bundle.sh
+
+Estructura sugerida del repo
+frutas_python/
+│── app.py
+│── requirements.txt
+│── Dockerfile
+│── docker-compose.offline.yml
+│── docker-compose.image.yml
+│── make_offline_bundle.sh
+│── wheels/          # <== solo en tu PC, no subas al repo
+└── templates/
+
+
+👉 Con esto podrás:
+
+En tu PC con Internet:
+
+./make_offline_bundle.sh
+
+Te deja frutas-python-1.tar y wheels/
+
+En el servidor sin Internet:
+
+Subes frutas-python-1.tar y wheels/
+
+Cargas la imagen: docker load -i frutas-python-1.tar
+
+Levantas con:
+
+docker compose -f docker-compose.image.yml up -d
+
+
+-------------------------------------------------------------------------
+  ** Pruebas locales con la imagen docker para descargar 
+o si quieres recompilar ahí mismo:
+
+docker compose -f docker-compose.offline.yml build --no-cache
+docker compose -f docker-compose.offline.yml up -d

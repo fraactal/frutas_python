@@ -1,16 +1,25 @@
-# Dependencias principales de la app
+# ==============================
+# FastAPI stack
+# ==============================
 fastapi==0.112.0
-uvicorn==0.30.6
-
-# Librerías para procesamiento de imágenes
-pillow==10.4.0
-
-# Modelos de NLP con HuggingFace
-transformers==4.44.2
-torch==2.4.1
-
-# Manejo de formularios
+uvicorn[standard]==0.30.6
+jinja2==3.1.4
 python-multipart==0.0.9
 
-# Templates HTML
-jinja2==3.1.4
+# ==============================
+# Image processing
+# ==============================
+pillow==10.4.0
+
+# ==============================
+# HuggingFace
+# ==============================
+transformers==4.44.2
+huggingface-hub==0.24.6
+safetensors==0.4.4
+
+# ==============================
+# Torch CPU (estable)
+# ==============================
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.1

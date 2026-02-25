@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   fruit-predictor:
-    build: .
+    image: frutas-python:1
     ports:
       - "8000:8000"
     restart: unless-stopped
+    pull_policy: never
