@@ -1,0 +1,43 @@
+services:
+  clip_cam_poc:
+    container_name: clip-cam-poc
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      # -------- Runtime / logs --------
+      PYTHONUNBUFFERED: "1"
+
+      # -------- Cámara --------
+      CAM_DEVICE: "/dev/video0"   # cambia a /dev/video1 si fuese necesario
+      INFER_EVERY_SEC: "0.7"
+      RESIZE_W: "224"
+      RESIZE_H: "224"
+      SHOW_WINDOW: "0"            # 1 solo si usas OpenCV con GUI (no headless)
+
+      # -------- Trigger por movimiento --------
+      MOTION_THRESHOLD: "25"
+      MOTION_MIN_AREA: "1200"
+      STABLE_MS: "800"
+      COOLDOWN_SEC: "1.0"
+
+      # -------- Optimización CPU (recomendado) --------
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
+
+      # -------- Modelo CLIP --------
+      MODEL_PATH: "/models/clip"
+
+    # Modelo Clip
+    volumes:
+      - "/home/jonas/Documentos/DartsTI_Proyectos/Python IA Balanzas/Frutas_CPU_camara_Clip/models/clip_model_dir:/models/clip:ro"
+
+    devices:
+      - "/dev/video0:/dev/video0"
+      - "/dev/video1:/dev/video1"
+
+    group_add:
+      - "video"
+
+    restart: "no"

@@ -1,0 +1,11 @@
+-r requirements-base.txt
+
+# Dependencias principales de la app
+fastapi==0.112.0
+uvicorn==0.30.6
+
+# Manejo de formularios
+python-multipart==0.0.9
+
+# Templates HTML
+jinja2==3.1.4
