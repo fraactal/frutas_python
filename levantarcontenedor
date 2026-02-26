@@ -1,0 +1,8 @@
+
+docker compose down
+docker compose up --build
+
+Verificar que la GPU quedó visible
+docker exec -it yolo-cam python3 -c "import torch; print(torch.cuda.is_available(), torch.cuda.device_count())"
+
+Esperado: True 1

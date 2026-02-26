@@ -1,7 +1,16 @@
+
 pillow==10.4.0
 numpy==1.26.4
 opencv-python-headless==4.10.0.84
 
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.4.1+cpu
-torchvision==0.19.1+cpu
+# PyTorch CUDA: agrega el repo de torch COMO EXTRA, no como único.
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.4.1
+torchvision==0.19.1
+
+# YOLO
+ultralytics==8.3.0
+
+# (Opcional, recomendado) Evita issues de imagen y performance
+pyyaml==6.0.2
+tqdm==4.66.5

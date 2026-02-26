@@ -1,33 +1,43 @@
 services:
-  vision_cam_poc:
-    container_name: vision-cam-poc
+  yolo_cam:
+    container_name: yolo-cam
     build:
       context: .
       dockerfile: Dockerfile
 
+    # ✅ Fuerza NVIDIA runtime (evita deploy/compatibility)
+    runtime: nvidia
+
     environment:
-      # -------- Runtime / logs --------
       PYTHONUNBUFFERED: "1"
+      LOG_FORMAT: "json"
 
-      # -------- Cámara --------
-      CAM_INDEX: "0"          # prueba 0 o 1
-      RESIZE_W: "224"
-      RESIZE_H: "224"
+      NVIDIA_VISIBLE_DEVICES: "all"
+      NVIDIA_DRIVER_CAPABILITIES: "compute,utility,video"
 
-      # -------- Trigger por movimiento --------
+      CAM_INDEX: "0"
+      RESIZE_W: "640"
+      RESIZE_H: "480"
+
       MOTION_THRESHOLD: "25"
       MOTION_MIN_AREA: "1200"
       STABLE_MS: "800"
 
-      # -------- Optimización CPU --------
-      OMP_NUM_THREADS: "2"
-      MKL_NUM_THREADS: "2"
+      FRAMES_BASE: "3"
+      FRAMES_MAX: "5"
+      MARGIN_THRESHOLD: "0.08"
+      FRAME_GAP_SEC: "0.03"
 
-      # -------- Modelo MobileNet --------
-      MOBILENET_WEIGHTS: "/models/mobilenet/mobilenet_v3_small_imagenet.pth"
+      YOLO_MODEL_PATH: "/models/yolo/yolov8s.pt"
+      YOLO_DEVICE: "cuda:0"
+      YOLO_HALF: "1"
+      YOLO_IMG_SIZE: "416"
+      YOLO_CONF: "0.25"
+      YOLO_IOU: "0.45"
+      YOLO_MAX_DET: "10"
 
     volumes:
-      - "./models/mobilenet:/models/mobilenet:ro"
+      - "./models/yolo:/models/yolo"
 
     devices:
       - "/dev/video0:/dev/video0"
